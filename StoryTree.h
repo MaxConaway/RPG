@@ -2,13 +2,7 @@
 // Created by tothe on 11/12/2026.
 //
 
-#ifndef RPG_STORYTREE_H
-#define RPG_STORYTREE_H
-#include <string>
-
-#include "Scene.h"
-
-#endif //RPG_STORYTREE_H
+#pragma once
 
 
 int countScenes(Scene<T>* scene) const {

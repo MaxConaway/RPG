@@ -3,5 +3,6 @@ project(RPG)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(RPG main.cpp
-        Scene.h)
+add_executable(RPG Adventure.cpp
+        Scene.h
+        StoryTree.h)
