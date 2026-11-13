@@ -17,7 +17,6 @@ public:
     static const int MAX_CHOICES = 3;
 
     Scene(T* data, int numChoices) : data_(data), choices_(nullptr), numChoices_(numChoices) {
-        // TODO 1
         if (numChoices_ > 0) {
             choices_ = new Scene<T>*[numChoices_];
 
@@ -28,7 +27,6 @@ public:
     }
 
     ~Scene() {
-        // TODO 2
         for (int i = 0; i < numChoices_; i++) {
             delete choices_[i];
         }
@@ -50,7 +48,6 @@ public:
     }
 
     Scene<T>* getChoice(int index) const {
-        // TODO 4
         if (index < 0 || index >= numChoices_) {
             return nullptr;
         }
@@ -60,7 +57,6 @@ public:
 
 
     void setChoice(int index, Scene<T>* next) {
-        // TODO 5
         if (index < 0 || index >= numChoices_) {
             return;
         }
