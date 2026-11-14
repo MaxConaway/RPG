@@ -1,6 +1,9 @@
 
 #include "Adventure.h"
 #include <iostream>
+#include "Scene.h"
+
+
 
 // ===================== GIVEN HELPERS (do not change) =====================
 
@@ -90,8 +93,68 @@ bool Adventure::load(const std::string& fileName) {
 }
 
 // TODO 11: Read a scene and its children.
+
 Scene<Moment>* Adventure::readScene(std::ifstream& in, const std::string& label) {
-    return nullptr;
+    std::string text;
+    std::string value;
+
+    // Read the scene information
+    if (!readField(in, "SCENE", text)) {
+        return nullptr;
+    }
+
+    if (!readField(in, "HP", value)) {
+        return nullptr;
+    }
+    int hp = std::stoi(value);
+
+    if (!readField(in, "LOOT", value)) {
+        return nullptr;
+    }
+    int loot = std::stoi(value);
+
+    if (!readField(in, "ITEM", value)) {
+        return nullptr;
+    }
+    std::string item = value;
+
+    if (!readField(in, "CHOICES", value)) {
+        return nullptr;
+    }
+    int numChoices = std::stoi(value);
+
+    // Make sure the number of choices is allowed
+    if (numChoices < 0 || numChoices > Scene<Moment>::MAX_CHOICES) {
+        std::cout << "Error: scene \"" << text << "\" has "
+                  << numChoices << " choices. The limit is 3."
+                  << std::endl;
+        return nullptr;
+    }
+
+    // Create the scene
+    Moment* moment = new Moment(text, label, hp, loot, item);
+    Scene<Moment>* scene = new Scene<Moment>(moment, numChoices);
+
+    // Read and connect each choice
+    for (int i = 0; i < numChoices; i++) {
+        std::string choiceLabel;
+
+        if (!readField(in, "LABEL", choiceLabel)) {
+            delete scene;
+            return nullptr;
+        }
+
+        Scene<Moment>* child = readScene(in, choiceLabel);
+
+        if (child == nullptr) {
+            delete scene;
+            return nullptr;
+        }
+
+        scene->setChoice(i, child);
+    }
+
+    return scene;
 }
 
 // ===================== PLAYING =====================
