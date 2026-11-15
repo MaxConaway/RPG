@@ -287,22 +287,171 @@ void Adventure::printStats() const {
 }
 
 // TODO 15: Print the spoiler guide.
+
 void Adventure::printSpoilers() const {
+    if (tree_.isEmpty()) {
+        return;
+    }
+
+    printEndings(tree_.getRoot(), "");
 }
 
 // TODO 16: Print every ending.
+
 void Adventure::printEndings(Scene<Moment>* scene, const std::string& path) const {
+    if (scene == nullptr) {
+        return;
+    }
+
+    if (scene->isEnding()) {
+        std::cout << "Path " << path << ": "
+                  << scene->getData()->getText()
+                  << std::endl;
+        return;
+    }
+
+    for (int i = 0; i < scene->getNumChoices(); i++) {
+        std::string nextPath = extendPath(path, i + 1);
+
+        printEndings(scene->getChoice(i), nextPath);
+    }
 }
 
 // TODO 17: Greedy advisor.
+
 void Adventure::greedyRun() const {
+    Scene<Moment>* current = tree_.getRoot();
+
+    if (current == nullptr) {
+        return;
+    }
+
+    int hp = startHp_;
+    int loot = 0;
+    std::string path = "";
+
+    while (current != nullptr) {
+        Moment* moment = current->getData();
+
+        hp += moment->getHpChange();
+        loot += moment->getLoot();
+
+        if (hp <= 0) {
+            break;
+        }
+
+        if (current->isEnding()) {
+            break;
+        }
+
+        int bestChoice = 0;
+        int mostLoot = current->getChoice(0)
+                              ->getData()->getLoot();
+
+        for (int i = 1; i < current->getNumChoices(); i++) {
+            int nextLoot = current->getChoice(i)
+                                 ->getData()->getLoot();
+
+            if (nextLoot > mostLoot) {
+                mostLoot = nextLoot;
+                bestChoice = i;
+            }
+        }
+
+        path = extendPath(path, bestChoice + 1);
+        current = current->getChoice(bestChoice);
+    }
+
+    std::cout << "Greedy advisor" << std::endl;
+    std::cout << "  Path: " << path << std::endl;
+    std::cout << "  Loot: " << loot << std::endl;
+
+    if (hp <= 0) {
+        std::cout << "  Result: died" << std::endl;
+    }
+    else {
+        std::cout << "  Result: reached an ending" << std::endl;
+    }
 }
+
 
 // TODO 18: Find the best possible loot.
-int Adventure::bestLoot(Scene<Moment>* scene, int hp, const std::string& path, std::string& bestPath) const {
-    return -1;
+
+int Adventure::bestLoot(Scene<Moment>* scene, int hp,
+                        const std::string& path,
+                        std::string& bestPath) const {
+    if (scene == nullptr) {
+        return -1;
+    }
+
+    Moment* moment = scene->getData();
+
+    hp += moment->getHpChange();
+
+    if (hp <= 0) {
+        return -1;
+    }
+
+    if (scene->isEnding()) {
+        bestPath = path;
+        return moment->getLoot();
+    }
+
+    int mostLoot = -1;
+    std::string winningPath = "";
+
+    for (int i = 0; i < scene->getNumChoices(); i++) {
+        std::string nextPath = extendPath(path, i + 1);
+        std::string childBestPath = "";
+
+        int childLoot = bestLoot(
+            scene->getChoice(i),
+            hp,
+            nextPath,
+            childBestPath
+        );
+
+        if (childLoot == -1) {
+            continue;
+        }
+
+        int totalLoot = moment->getLoot() + childLoot;
+
+        if (totalLoot > mostLoot) {
+            mostLoot = totalLoot;
+            winningPath = childBestPath;
+        }
+    }
+
+    if (mostLoot != -1) {
+        bestPath = winningPath;
+    }
+
+    return mostLoot;
 }
 
+
 // TODO 19: Optimal advisor.
+
 void Adventure::optimalRun() const {
+    Scene<Moment>* root = tree_.getRoot();
+
+    if (root == nullptr) {
+        return;
+    }
+
+    std::string bestPath = "";
+
+    int loot = bestLoot(root, startHp_, "", bestPath);
+
+    std::cout << "Optimal advisor" << std::endl;
+    std::cout << "  Path: " << bestPath << std::endl;
+    std::cout << "  Loot: " << loot << std::endl;
+
+    if (loot == -1) {
+        std::cout << "  Result: no surviving path" << std::endl;
+    }
+    else {
+        std::cout << "  Result: reached an ending" << std::endl;
+    }
 }

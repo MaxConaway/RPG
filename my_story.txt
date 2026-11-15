@@ -1,0 +1,138 @@
+START_HP 10
+SCENE You wake up in a San Diego hospital. Zombies are pounding on the doors. The evacuation radio says a rescue boat leaves at dawn.
+HP 0
+LOOT 0
+ITEM none
+CHOICES 3
+  LABEL Raid the hospital pharmacy
+  SCENE You find a cabinet full of medical supplies, but the noise attracts a horde.
+  HP -2
+  LOOT 8
+  ITEM Med Kit
+  CHOICES 2
+    LABEL Break into the locked supply room
+    SCENE You grab a crate of medicine. A zombie crashes through the ceiling.
+    HP -4
+    LOOT 9
+    ITEM Medicine Crate
+    CHOICES 2
+      LABEL Carry the heavy crate outside
+      SCENE The crate slows you down. The horde surrounds you before you reach the exit.
+      HP -12
+      LOOT 2
+      ITEM none
+      CHOICES 0
+      LABEL Drop the crate and crawl through a vent
+      SCENE You escape the hospital, bruised but alive, and hide until morning.
+      HP -2
+      LOOT 1
+      ITEM none
+      CHOICES 0
+    LABEL Take the back stairwell
+    SCENE You reach the parking lot and find a working motorcycle.
+    HP -1
+    LOOT 2
+    ITEM Motorcycle Key
+    CHOICES 1
+      LABEL Ride toward the rescue docks
+      SCENE You reach the docks, but the last boat has already left. You survive in an empty warehouse.
+      HP -1
+      LOOT 2
+      ITEM none
+      CHOICES 0
+  LABEL Follow the emergency radio signal
+  SCENE You follow the signal through empty streets and find a survivor named Maya.
+  HP -1
+  LOOT 2
+  ITEM Flashlight
+  CHOICES 2
+    LABEL Help Maya reach the police station
+    SCENE Maya shows you a shortcut. You find a police station with a locked armory.
+    HP -1
+    LOOT 3
+    ITEM none
+    CHOICES 2
+      LABEL Force open the armory
+      SCENE You find a shotgun, but the alarm wakes zombies sleeping in the cells.
+      HP -5
+      LOOT 7
+      ITEM Shotgun
+      CHOICES 2
+        LABEL Fight through the main entrance
+        SCENE You run out of ammunition. The zombies break through your barricade.
+        HP -10
+        LOOT 1
+        ITEM none
+        CHOICES 0
+        LABEL Escape through the roof
+        SCENE You jump to the next building and wait for daylight. You survive, but miss the rescue boat.
+        HP -1
+        LOOT 2
+        ITEM none
+        CHOICES 0
+      LABEL Search the dispatch office
+      SCENE You discover a map showing a tunnel to the harbor. Maya finds a first aid kit.
+      HP 2
+      LOOT 4
+      ITEM Harbor Map
+      CHOICES 2
+        LABEL Use the maintenance tunnel
+        SCENE You crawl under the city and hear rescue helicopters overhead.
+        HP -1
+        LOOT 3
+        ITEM Battery
+        CHOICES 2
+          LABEL Climb out beside the harbor
+          SCENE You signal the rescue boat with your flashlight. You and Maya escape San Diego alive.
+          HP 0
+          LOOT 8
+          ITEM Rescue Pass
+          CHOICES 0
+          LABEL Explore a side tunnel for supplies
+          SCENE You find food but become trapped behind a collapsed gate. You survive underground.
+          HP -2
+          LOOT 2
+          ITEM Canned Food
+          CHOICES 0
+        LABEL Take the highway instead
+        SCENE The highway is blocked with abandoned cars. You survive the night inside a bus.
+        HP -2
+        LOOT 1
+        ITEM none
+        CHOICES 0
+    LABEL Leave Maya and travel alone
+    SCENE You find an empty apartment and lock the door before sunset.
+    HP 0
+    LOOT 1
+    ITEM House Key
+    CHOICES 1
+      LABEL Stay hidden until sunrise
+      SCENE You survive the night, but the rescue boat leaves without you.
+      HP 0
+      LOOT 1
+      ITEM none
+      CHOICES 0
+  LABEL Run straight toward the coast
+  SCENE You sprint toward the beach and find a lifeguard tower.
+  HP -3
+  LOOT 1
+  ITEM none
+  CHOICES 2
+    LABEL Climb the lifeguard tower
+    SCENE You survive the night above the zombies, but nobody comes to rescue you.
+    HP 0
+    LOOT 1
+    ITEM none
+    CHOICES 0
+    LABEL Search the beach for a boat
+    SCENE You find a small fishing boat without fuel.
+    HP -2
+    LOOT 3
+    ITEM Boat Key
+    CHOICES 1
+      LABEL Wait inside the boat
+      SCENE You survive until morning, stranded on the beach.
+      HP 0
+      LOOT 1
+      ITEM none
+      CHOICES 0
