@@ -30,7 +30,7 @@ bool Adventure::nextLine(std::ifstream& in, std::string& line) {
     return false;
 }
 
-// Reads the next line and checks that it starts with keyword.
+
 bool Adventure::readField(std::ifstream& in, const std::string& keyword, std::string& value) {
     std::string line;
 
@@ -52,7 +52,7 @@ bool Adventure::readField(std::ifstream& in, const std::string& keyword, std::st
     return true;
 }
 
-// Adds one choice number to a path.
+
 std::string Adventure::extendPath(const std::string& path, int choiceNumber) const {
     if (path.empty()) {
         return std::to_string(choiceNumber);
@@ -98,7 +98,7 @@ Scene<Moment>* Adventure::readScene(std::ifstream& in, const std::string& label)
     std::string text;
     std::string value;
 
-    // Read the scene information
+
     if (!readField(in, "SCENE", text)) {
         return nullptr;
     }
@@ -123,7 +123,7 @@ Scene<Moment>* Adventure::readScene(std::ifstream& in, const std::string& label)
     }
     int numChoices = std::stoi(value);
 
-    // Make sure the number of choices is allowed
+
     if (numChoices < 0 || numChoices > Scene<Moment>::MAX_CHOICES) {
         std::cout << "Error: scene \"" << text << "\" has "
                   << numChoices << " choices. The limit is 3."
@@ -131,11 +131,11 @@ Scene<Moment>* Adventure::readScene(std::ifstream& in, const std::string& label)
         return nullptr;
     }
 
-    // Create the scene
+
     Moment* moment = new Moment(text, label, hp, loot, item);
     Scene<Moment>* scene = new Scene<Moment>(moment, numChoices);
 
-    // Read and connect each choice
+
     for (int i = 0; i < numChoices; i++) {
         std::string choiceLabel;
 
@@ -160,18 +160,130 @@ Scene<Moment>* Adventure::readScene(std::ifstream& in, const std::string& label)
 // ===================== PLAYING =====================
 
 // TODO 12: Ask the player for a choice.
+
+
 int Adventure::askChoice(int numChoices) {
-    return 0;
+    std::string line;
+
+    while (true) {
+        std::cout << "Your choice: ";
+
+        if (!std::getline(std::cin, line)) {
+            return 0;
+        }
+
+        try {
+            size_t pos = 0;
+            int choice = std::stoi(line, &pos);
+
+            if (pos == line.size() &&
+                choice >= 1 && choice <= numChoices) {
+                return choice;
+                }
+        }
+        catch (...) {
+        }
+
+        std::cout << "Please type a number from 1 to "
+                  << numChoices << "." << std::endl;
+    }
 }
 
+
 // TODO 13: Play the story.
+
 void Adventure::play() {
+    Scene<Moment>* current = tree_.getRoot();
+
+    if (current == nullptr) {
+        return;
+    }
+
+    int hp = startHp_;
+    int loot = 0;
+    List<Item> bag;
+
+    while (current != nullptr) {
+        Moment* moment = current->getData();
+
+
+        hp += moment->getHpChange();
+        loot += moment->getLoot();
+
+
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << moment->getText() << std::endl;
+
+
+        if (moment->hasItem()) {
+            Item item(moment->getItem());
+
+            if (bag.search(item)) {
+                std::cout << "You already have: "
+                          << moment->getItem() << std::endl;
+            }
+            else {
+                bag.addFront(new Item(moment->getItem()));
+                std::cout << "You picked up: "
+                          << moment->getItem() << std::endl;
+            }
+        }
+
+
+        std::cout << "HP: " << hp
+                  << "  Loot: " << loot << std::endl;
+
+
+        if (hp <= 0) {
+            std::cout << "Your HP hit 0. GAME OVER." << std::endl;
+            break;
+        }
+
+
+        if (current->isEnding()) {
+            std::cout << "THE END." << std::endl;
+            break;
+        }
+
+
+        for (int i = 0; i < current->getNumChoices(); i++) {
+            Scene<Moment>* next = current->getChoice(i);
+
+            std::cout << "[" << i + 1 << "] "
+                      << next->getData()->getLabel()
+                      << std::endl;
+        }
+
+
+        int choice = askChoice(current->getNumChoices());
+
+        if (choice == 0) {
+            break;
+        }
+
+
+        current = current->getChoice(choice - 1);
+    }
+
+
+    std::cout << "Final HP: " << hp
+              << "  Final loot: " << loot << std::endl;
+
+    std::cout << "Inventory (" << bag.size()
+              << " items):" << std::endl;
+
+    bag.print();
 }
 
 // ===================== ANALYZING =====================
 
 // TODO 14: Print story stats.
+
 void Adventure::printStats() const {
+    std::cout << "Scenes: " << tree_.countScenes() << std::endl;
+    std::cout << "Endings: " << tree_.countEndings() << std::endl;
+    std::cout << "Longest playthrough: " << tree_.height()
+              << " choices" << std::endl;
 }
 
 // TODO 15: Print the spoiler guide.
